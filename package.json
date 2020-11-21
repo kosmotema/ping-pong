@@ -1,6 +1,6 @@
 {
   "name": "@xapdkop/ping-pong",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "private": true,
   "description": "Just a classic version of the Pong Pong game",
   "main": "index.html",
