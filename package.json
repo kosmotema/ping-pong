@@ -8,9 +8,12 @@
     "sass:prod": "sass ./scss/:./assets/css/",
     "sass:dev": "yarn sass:prod --style expanded --source-map",
     "sass:watch": "yarn sass:dev --watch",
-    "build": "tsc && yarn sass:prod",
-    "predev": "tsc && yarn sass:dev",
-    "dev": "concurrently --kill-others \"yarn sass:watch\" \"tsc --watch\" \"ts-node-dev --respawn --inspect --transpile-only --project ./tsconfig.server.json ./server.ts\"",
+    "ts:build": "tsc",
+    "ts:watch": "tsc --watch",
+    "server": "ts-node-dev --respawn --inspect --transpile-only --project ./tsconfig.server.json ./server.ts",
+    "build": "run-p ts:build sass:prod",
+    "build:dev": "run-p ts:build sass:dev",
+    "dev": "yarn build:dev && run-p sass:watch ts:watch server",
     "svgo": "svgo -f ./assets/img"
   },
   "repository": {
@@ -23,16 +26,14 @@
     "url": "https://github.com/xapdkop/ping-pong/issues"
   },
   "homepage": "https://github.com/xapdkop/ping-pong#readme",
-  "dependencies": {
-    "sass": "^1.29.0",
-    "typescript": "^4.0.5"
-  },
   "devDependencies": {
     "@types/node": "^14.14.6",
-    "concurrently": "^5.3.0",
     "fastify": "^3.7.0",
     "fastify-static": "^3.3.0",
+    "npm-run-all": "^4.1.5",
+    "sass": "^1.29.0",
     "svgo": "^1.3.2",
-    "ts-node-dev": "^1.0.0-pre.63"
+    "ts-node-dev": "^1.0.0-pre.63",
+    "typescript": "^4.0.5"
   }
 }
