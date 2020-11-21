@@ -10,11 +10,11 @@
     "sass:watch": "yarn sass:dev --watch",
     "ts:build": "tsc",
     "ts:watch": "tsc --watch",
-    "server": "ts-node-dev --respawn --inspect --transpile-only --project ./tsconfig.server.json ./server.ts",
+    "server:build": "tsc --project ./tsconfig.server.json",
+    "server:run": "node ./server.js",
+    "svgo": "svgo -f ./assets/img",
     "build": "run-p ts:build sass:prod",
-    "build:dev": "run-p ts:build sass:dev",
-    "dev": "yarn build:dev && run-p sass:watch ts:watch server",
-    "svgo": "svgo -f ./assets/img"
+    "dev": "run-p ts:build sass:dev server:build && run-p sass:watch ts:watch server:run"
   },
   "repository": {
     "type": "git",

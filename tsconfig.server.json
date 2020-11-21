@@ -10,11 +10,7 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": [
+  "files": [
     "server.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "**/*.spec.ts"
   ]
 }
