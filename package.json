@@ -5,12 +5,12 @@
   "description": "Just a classic version of the Pong Pong game",
   "main": "index.html",
   "scripts": {
-    "sass:prod": "node-sass scss/ --output assets/css/",
-    "sass:dev": "npm run sass:prod -- --output-style expanded --source-map true",
-    "sass:watch": "npm run sass:dev -- --watch",
-    "build": "tsc && npm run sass:prod",
-    "predev": "tsc && npm run sass:dev",
-    "dev": "concurrently --kill-others \"npm run sass:watch\" \"tsc --watch\" \"ts-node-dev --respawn --inspect --transpile-only --project tsconfig.server.json server.ts\"",
+    "sass:prod": "node-sass ./scss/ --output ./assets/css/",
+    "sass:dev": "yarn sass:prod --output-style expanded --source-map true",
+    "sass:watch": "yarn sass:dev --watch",
+    "build": "tsc && yarn sass:prod",
+    "predev": "tsc && yarn sass:dev",
+    "dev": "concurrently --kill-others \"yarn sass:watch\" \"tsc --watch\" \"ts-node-dev --respawn --inspect --transpile-only --project ./tsconfig.server.json ./server.ts\"",
     "svgo": "svgo -f ./assets/img"
   },
   "repository": {
