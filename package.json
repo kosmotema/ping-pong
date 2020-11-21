@@ -5,8 +5,8 @@
   "description": "Just a classic version of the Pong Pong game",
   "main": "index.html",
   "scripts": {
-    "sass:prod": "node-sass ./scss/ --output ./assets/css/",
-    "sass:dev": "yarn sass:prod --output-style expanded --source-map true",
+    "sass:prod": "sass ./scss/:./assets/css/",
+    "sass:dev": "yarn sass:prod --style expanded --source-map",
     "sass:watch": "yarn sass:dev --watch",
     "build": "tsc && yarn sass:prod",
     "predev": "tsc && yarn sass:dev",
@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/xapdkop/ping-pong#readme",
   "dependencies": {
-    "node-sass": "^5.0.0",
+    "sass": "^1.29.0",
     "typescript": "^4.0.5"
   },
   "devDependencies": {
