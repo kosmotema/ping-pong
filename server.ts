@@ -1,5 +1,5 @@
-import fastify from 'fastify';
-import fastifyStatic from 'fastify-static';
+import fastify from 'fastify'
+import fastifyStatic from 'fastify-static'
 
 (async () => {
     fastify()
@@ -7,5 +7,5 @@ import fastifyStatic from 'fastify-static';
             root: __dirname,
         })
         .get('/', async (_request, reply) => reply.sendFile('game.html'))
-        .listen(3000);
-})();
+        .listen(3000)
+})()

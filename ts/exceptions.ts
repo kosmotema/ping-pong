@@ -6,6 +6,6 @@ export class GamePlayerError {
     }
 }
 
-export class GameMissError extends GamePlayerError { }
+export class GameMissError extends GamePlayerError {}
 
-export class GameLossError extends GamePlayerError { }
+export class GameLossError extends GamePlayerError {}
