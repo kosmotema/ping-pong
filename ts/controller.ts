@@ -8,12 +8,13 @@ export default class Controller {
     public static readonly RACKET_DEFAULT_SPEED = 7
     public static readonly DEFAULT_LIVES = 3
 
-    private _model: Model
+    private readonly _model: Model
     private _time?: number
     private _state: GameStateType = GameStateType.stop
     private _requestID?: number
 
-    private _keyState: Record<GameKeyType, boolean> & OptionalIndex<boolean> = {
+    private readonly _keyState: Record<GameKeyType, boolean> &
+        OptionalIndex<boolean> = {
         KeyW: false,
         KeyS: false,
         ArrowUp: false,
@@ -59,6 +60,8 @@ export default class Controller {
         } else {
             document.removeEventListener('keydown', this._manipulationKeyDown)
             document.removeEventListener('keyup', this._manipulationKeyUp)
+
+            this._keyState.KeyW = this._keyState.KeyS = this._keyState.ArrowDown = this._keyState.ArrowDown = false
 
             if (this._requestID) {
                 cancelAnimationFrame(this._requestID)
