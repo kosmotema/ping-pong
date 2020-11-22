@@ -1,5 +1,6 @@
-js/
-assets/css/
+*.js
+*.css
+*.map
 
 .yarn/*
 !.yarn/releases
