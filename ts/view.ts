@@ -13,7 +13,11 @@ export default class View {
     private readonly _winnerPlayer: HTMLElement | null
     private readonly _sounds: Record<GameSoundType, HTMLElement | null>
 
-    public constructor(objects: Record<keyof typeof ObjectType, HTMLElement>, lives: Record<keyof typeof RacketType, HTMLElement>, controls: IControls) {
+    public constructor(
+        objects: Record<keyof typeof ObjectType, HTMLElement>,
+        lives: Record<keyof typeof RacketType, HTMLElement>,
+        controls: IControls
+    ) {
         this._leftRacket = objects.leftRacket
         this._rightRacket = objects.rightRacket
         this._ball = objects.ball
@@ -27,24 +31,30 @@ export default class View {
             'game-over': document.getElementById('game-over-sound'),
             ping: document.getElementById('ping-sound'),
             pong: document.getElementById('pong-sound'),
-            start: document.getElementById('start-sound')
+            start: document.getElementById('start-sound'),
         }
 
-        const dependentSettings = document.getElementsByClassName('dependent');
-        document.querySelectorAll('input[type=radio][name=mode]').forEach(v => v.addEventListener('change', ev => {
-            const value = (ev.currentTarget as HTMLInputElement).value
-            for (const setting of dependentSettings)
-                setting.classList.toggle('hidden', value !== setting.getAttribute('data-type'))
-        }))
+        const dependentSettings = document.getElementsByClassName('dependent')
+        document.querySelectorAll('input[type=radio][name=mode]').forEach(v =>
+            v.addEventListener('change', ev => {
+                const value = (ev.currentTarget as HTMLInputElement).value
+                for (const setting of dependentSettings)
+                    setting.classList.toggle(
+                        'hidden',
+                        value !== setting.getAttribute('data-type')
+                    )
+            })
+        )
     }
 
     // TODO: investigate some bugs in stable Edge (it sets `left` (and `shape`?) for all objects, not only `object`)
     private updateShape(object: ObjectType, shape: Partial<IShape>) {
-        let style: CSSStyleDeclaration;
+        let style: CSSStyleDeclaration
         switch (object) {
-            case ObjectType.leftRacket: {
-                style = this._leftRacket.style
-            }
+            case ObjectType.leftRacket:
+                {
+                    style = this._leftRacket.style
+                }
                 break
             case ObjectType.rightRacket:
                 style = this._rightRacket.style
@@ -52,17 +62,14 @@ export default class View {
             case ObjectType.ball:
                 style = this._ball.style
                 break
-            default: return
+            default:
+                return
         }
 
-        if (shape.top !== undefined)
-            style.top = `${shape.top}px`
-        if (shape.left !== undefined)
-            style.left = `${shape.left}px`
-        if (shape.width !== undefined)
-            style.width = `${shape.width}px`
-        if (shape.height !== undefined)
-            style.height = `${shape.height}px`
+        if (shape.top !== undefined) style.top = `${shape.top}px`
+        if (shape.left !== undefined) style.left = `${shape.left}px`
+        if (shape.width !== undefined) style.width = `${shape.width}px`
+        if (shape.height !== undefined) style.height = `${shape.height}px`
     }
 
     public updatePosition(object: ObjectType, { left, top }: IPosition) {
@@ -94,15 +101,13 @@ export default class View {
             this._lives.right.classList.remove('points')
             this._lives.left.classList.add('lives')
             this._lives.right.classList.add('lives')
-        }
-        else {
+        } else {
             if (params.hasCounter) {
                 this._lives.left.classList.remove('lives')
                 this._lives.right.classList.remove('lives')
                 this._lives.left.classList.add('points')
                 this._lives.right.classList.add('points')
-            }
-            else {
+            } else {
                 this._lives.left.classList.add('hidden')
                 this._lives.right.classList.add('hidden')
             }
@@ -120,7 +125,10 @@ export default class View {
                     break
             }
         this._toggleControlClass('lose', 'hidden', false)
-        setTimeout(() => this._toggleControlClass('lose', 'fade-out', true), View.NOTIFICATION_FADEOUT)
+        setTimeout(
+            () => this._toggleControlClass('lose', 'fade-out', true),
+            View.NOTIFICATION_FADEOUT
+        )
         setTimeout(() => {
             this._toggleControlClass('lose', 'hidden', true)
             this._toggleControlClass('lose', 'fade-out', false)
@@ -144,18 +152,42 @@ export default class View {
     }
 
     public notifyStateChange(newState: GameStateType) {
-        this._toggleControlClass('greeting', 'hidden', newState !== GameStateType.stop)
-        this._toggleControlClass('playPause', 'play', newState !== GameStateType.play)
-        this._toggleControlClass('playPause', 'pause', newState !== GameStateType.pause)
-        this._toggleControlClass('pause', 'hidden', newState !== GameStateType.pause)
-        this._toggleControlClass('miss', 'hidden', newState !== GameStateType.miss)
+        this._toggleControlClass(
+            'greeting',
+            'hidden',
+            newState !== GameStateType.stop
+        )
+        this._toggleControlClass(
+            'playPause',
+            'play',
+            newState !== GameStateType.play
+        )
+        this._toggleControlClass(
+            'playPause',
+            'pause',
+            newState !== GameStateType.pause
+        )
+        this._toggleControlClass(
+            'pause',
+            'hidden',
+            newState !== GameStateType.pause
+        )
+        this._toggleControlClass(
+            'miss',
+            'hidden',
+            newState !== GameStateType.miss
+        )
     }
 
     public toggleSettingsUI(state: boolean) {
         this._toggleControlClass('settingsWrapper', 'hidden', !state)
     }
 
-    private _toggleControlClass(control: ControlType, token: string, state: boolean) {
+    private _toggleControlClass(
+        control: ControlType,
+        token: string,
+        state: boolean
+    ) {
         this._controls[control]?.classList.toggle(token, state)
     }
 
