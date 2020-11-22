@@ -23,11 +23,9 @@
     "forceConsistentCasingInFileNames": true
   },
   "include": [
-    "ts/*",
+    "ts/**/*",
+  ],
+  "files": [
     "@types/index.d.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "**/*.spec.ts"
-  ],
+  ]
 }

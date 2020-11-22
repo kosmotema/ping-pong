@@ -3,18 +3,18 @@
   "version": "0.9.0",
   "private": true,
   "description": "Just a classic version of the Pong Pong game",
-  "main": "index.html",
+  "main": "game.html",
   "scripts": {
     "sass:prod": "sass ./scss/:./assets/css/",
     "sass:dev": "yarn sass:prod --style expanded --source-map",
     "sass:watch": "yarn sass:dev --watch",
     "ts:build": "tsc",
     "ts:watch": "tsc --watch",
-    "server": "ts-node-dev --respawn --inspect --transpile-only --project ./tsconfig.server.json ./server.ts",
+    "server:build": "tsc --project ./tsconfig.server.json",
+    "server:run": "node ./server.js",
+    "svgo": "svgo -f ./assets/img",
     "build": "run-p ts:build sass:prod",
-    "build:dev": "run-p ts:build sass:dev",
-    "dev": "yarn build:dev && run-p sass:watch ts:watch server",
-    "svgo": "svgo -f ./assets/img"
+    "dev": "run-p ts:build sass:dev server:build && run-p sass:watch ts:watch server:run"
   },
   "repository": {
     "type": "git",
@@ -27,13 +27,13 @@
   },
   "homepage": "https://github.com/xapdkop/ping-pong#readme",
   "devDependencies": {
+    "@tsconfig/recommended": "^1.0.1",
     "@types/node": "^14.14.9",
     "fastify": "^3.8.0",
     "fastify-static": "^3.3.0",
     "npm-run-all": "^4.1.5",
     "sass": "^1.29.0",
     "svgo": "^1.3.2",
-    "ts-node-dev": "^1.0.0",
     "typescript": "^4.1.2"
   }
 }

@@ -1,20 +1,11 @@
 {
+  "extends": "@tsconfig/recommended",
   "compilerOptions": {
     "incremental": true,
-    "target": "es2016",
-    "module": "commonjs",
     "allowJs": false,
-    "checkJs": false,
-    "removeComments": true,
-    "strict": true,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true
+    "checkJs": false
   },
-  "include": [
+  "files": [
     "server.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "**/*.spec.ts"
   ]
 }
