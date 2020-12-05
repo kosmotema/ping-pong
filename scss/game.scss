@@ -1,81 +1,27 @@
-#left,
-#right {
+#game {
     position: absolute;
-    display: block;
-    top: calc(50% - 1.75rem);
-    height: 3.5rem;
-    width: 0.4rem;
-    border-radius: 5rem;
-    background-color: white;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
 }
 
-#left {
-    left: 1.5rem;
-}
-
-#right {
-    left: calc(100% - 1.5rem);
-}
-
-#ball {
+.notification {
     position: absolute;
-    display: block;
-    background-color: white;
-    width: 1rem;
-    height: 1rem;
-    border: 1px solid black;
-    border-radius: 100%;
-
-    top: calc(50% - 0.5rem);
-    left: calc(50% - 0.5rem);
-}
-
-main > * {
-    position: absolute;
-}
-
-.counter {
-    line-height: 1rem;
     top: 1.5rem;
-    border: 2px solid white;
-    padding: 0.4rem 0.75rem;
-    border-radius: 1rem;
-    font-weight: bold;
+    left: auto;
+    right: auto;
     color: white;
+    padding: 1rem 2.5rem;
+    font-size: 1.15rem;
+    margin: 0 auto;
+    font-family: 'Press Start 2P', 'Press Start 2P - Fallback', cursive;
+    background-color: rgba(0, 0, 0, 0.75);
+    border: 0.25rem white;
+    border-style: groove dashed;
 }
 
-#left-counter::after,
-#right-counter::before {
-    line-height: 1rem;
-    vertical-align: sub;
-    content: '';
-    display: inline-block;
-    height: 1rem;
-    width: 1rem;
-}
-
-#left-counter.lives::after,
-#right-counter.lives::before {
-    background: url('../img/heart.svg') center/contain no-repeat;
-}
-
-#left-counter.points::after,
-#right-counter.points::before {
-    background: url('../img/points.svg') center/contain no-repeat;
-}
-
-#left-counter {
-    right: 60%;
-
-    &::after {
-        margin-left: 0.25rem;
-    }
-}
-
-#right-counter {
-    left: 60%;
-
-    &::before {
-        margin-right: 0.25rem;
-    }
+.fade-out {
+    transition: opacity 3.5s linear;
+    opacity: 0;
 }
