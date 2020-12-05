@@ -1,77 +1,78 @@
-declare const enum RacketType {
-    left,
-    right
-}
+type RacketType = 'left' | 'right' 
 
-declare const enum RacketDirectionType {
-    up,
-    down
-}
+type RacketDirectionType = 'up' | 'down'
 
-declare const enum ObjectType {
-    leftRacket,
-    rightRacket,
-    ball
-}
+type ObjectType = 'leftRacket' | 'rightRacket' | 'ball'
 
-declare const enum ModeType {
-    competitive = 0,
-    free = 1
-}
+type ModeType = 'competitive' | 'free'
 
-declare const enum GameStateType {
-    play = 0,
-    pause = 1,
-    miss = 2,
-    stop = 3
-}
+type GameStateType = 'play' | 'pause' | 'miss' | 'stop'
 
 interface ISize {
-    width: number,
+    width: number
     height: number
 }
 
 interface IPosition {
-    top: number,
-    left: number
+    y: number
+    x: number
 }
 
 interface IOrientation {
-    vertical: number,
+    vertical: number
     horizotal: number
+}
+
+interface IRadius {
+    radius: number
 }
 
 type IShape = ISize & IPosition
 
-type IShapePartial = Partial<IShape> & {
-    [key in keyof IShape]?: number
+type GameObjectsData = {
+    racket: ISize & { offset: number }
+    ball: IRadius
 }
 
-type IRacket = IShape & { counter: number }
-type IBall = IShape & { angle: number }
+type IRacket = IPosition & ISize & { counter: number }
+type IBall = IPosition & IRadius & { angle: number; speed: number }
 
-type ControlObject = { element: HTMLElement | null, callback?: (event: Event) => void }
+type ControlObject = {
+    element: HTMLElement | null
+    callback?: (event: Event) => void
+}
 
-type ControlType = 'playPause' | 'settingsForm' | 'settingsOpenner' | 'settingsClose' | 'settingsWrapper' | 'greeting' | 'pause' | 'miss' | 'lose' | 'volume'
+type ControlType =
+    | 'playPause'
+    | 'settingsForm'
+    | 'settingsOpenner'
+    | 'settingsClose'
+    | 'settingsWrapper'
+    | 'greeting'
+    | 'pause'
+    | 'miss'
+    | 'lose'
+    | 'volume'
+    | 'restart'
 
 type IControls = Record<ControlType, HTMLElement | null>
 
 interface BasicGameParams {
-    missPause: boolean,
+    missPause: boolean
     speed: {
-        ball: number,
+        ball: number
         racket: number
     }
 }
 
 interface FreeGameParams extends BasicGameParams {
-    mode: ModeType.free,
-    needRestart: boolean,
-    hasCounter: boolean,
+    mode: 'free'
+    needRestart: boolean
+    hasCounter: boolean
 }
 
 interface CompetitiveGameParams extends BasicGameParams {
-    mode: ModeType.competitive,
+    mode: 'competitive'
     lives: number
 }
 

@@ -10,11 +10,10 @@ export default class Controller {
 
     private readonly _model: Model
     private _time?: number
-    private _state: GameStateType = GameStateType.stop
+    private _state: GameStateType = 'stop'
     private _requestID?: number
 
-    private readonly _keyState: Record<GameKeyType, boolean> &
-        OptionalIndex<boolean> = {
+    private readonly _keyState: Record<GameKeyType, boolean> & OptionalIndex<boolean> = {
         KeyW: false,
         KeyS: false,
         ArrowUp: false,
@@ -25,34 +24,31 @@ export default class Controller {
         return this._state
     }
 
-    public toggleGameState(
-        state?: GameStateType,
-        silenced: boolean = false
-    ): boolean {
+    public toggleGameState(state?: GameStateType, silenced: boolean = false): boolean {
         const old = this._state
 
         if (state === old) return false
 
         if (state === undefined)
             switch (old) {
-                case GameStateType.play:
-                    this._state = GameStateType.pause
+                case 'play':
+                    this._state = 'pause'
                     break
-                case GameStateType.pause:
-                case GameStateType.miss:
-                    this._state = GameStateType.play
+                case 'pause':
+                case 'miss':
+                    this._state = 'play'
                     break
                 default:
                     return false
             }
         else this._state = state
 
-        if (old === GameStateType.stop)
-            document.addEventListener('keypress', this._controlKeyDown)
-        if (this._state === GameStateType.stop)
-            document.removeEventListener('keypress', this._controlKeyDown)
+        if (old === 'stop') document.addEventListener('keypress', this._controlKeyDown)
+        if (this._state === 'stop') document.removeEventListener('keypress', this._controlKeyDown)
 
-        if (this._state === GameStateType.play) {
+        this._keyState.KeyW = this._keyState.KeyS = this._keyState.ArrowDown = this._keyState.ArrowDown = false
+
+        if (this._state === 'play') {
             this._time = undefined
             requestAnimationFrame(this._moveBall)
             document.addEventListener('keydown', this._manipulationKeyDown)
@@ -60,8 +56,6 @@ export default class Controller {
         } else {
             document.removeEventListener('keydown', this._manipulationKeyDown)
             document.removeEventListener('keyup', this._manipulationKeyUp)
-
-            this._keyState.KeyW = this._keyState.KeyS = this._keyState.ArrowDown = this._keyState.ArrowDown = false
 
             if (this._requestID) {
                 cancelAnimationFrame(this._requestID)
@@ -74,37 +68,43 @@ export default class Controller {
         return true
     }
 
-    public constructor(
-        model: Model,
-        controls: IControls & { resume: HTMLCollectionOf<Element> }
-    ) {
+    public constructor(model: Model, controls: IControls & { resume: HTMLCollectionOf<Element> }) {
         this._model = model
 
         this._initControls(controls)
+
+        let blurred = false
+
+        window.addEventListener('blur', () => {
+            if (this._state !== 'play') return
+            blurred = true
+            this.toggleGameState('pause')
+        })
+
+        window.addEventListener('focus', () => {
+            if (blurred) {
+                this.toggleGameState('play')
+                blurred = false
+            }
+        })
     }
 
     private _manipulationKeyDown = (ev: KeyboardEvent) => {
-        this._keyState[ev.code] !== undefined &&
-            (this._keyState[ev.code] = true)
+        this._keyState[ev.code] !== undefined && (this._keyState[ev.code] = true)
     }
 
     private _manipulationKeyUp = (ev: KeyboardEvent) => {
-        this._keyState[ev.code] !== undefined &&
-            (this._keyState[ev.code] = false)
+        this._keyState[ev.code] !== undefined && (this._keyState[ev.code] = false)
     }
 
     private _handlePressedKeys = () => {
-        if (this._keyState.KeyW)
-            this._model.moveRacket(RacketType.left, RacketDirectionType.up)
+        if (this._keyState.KeyW) this._model.moveRacket('left', 'up')
 
-        if (this._keyState.KeyS)
-            this._model.moveRacket(RacketType.left, RacketDirectionType.down)
+        if (this._keyState.KeyS) this._model.moveRacket('left', 'down')
 
-        if (this._keyState.ArrowUp)
-            this._model.moveRacket(RacketType.right, RacketDirectionType.up)
+        if (this._keyState.ArrowUp) this._model.moveRacket('right', 'up')
 
-        if (this._keyState.ArrowDown)
-            this._model.moveRacket(RacketType.right, RacketDirectionType.down)
+        if (this._keyState.ArrowDown) this._model.moveRacket('right', 'down')
     }
 
     private _controlKeyDown = (event: KeyboardEvent) => {
@@ -125,13 +125,13 @@ export default class Controller {
     }
 
     public restart() {
-        this.toggleGameState(GameStateType.pause, true)
+        this.toggleGameState('pause', true)
         this._model.reset(true)
-        this.toggleGameState(GameStateType.play)
+        this.toggleGameState('play')
     }
 
     public stop() {
-        this.toggleGameState(GameStateType.stop)
+        this.toggleGameState('stop')
         this._model.reset(true)
     }
 
@@ -142,12 +142,10 @@ export default class Controller {
             missPause: !!data.get('miss-pause'),
             speed: {
                 ball:
-                    (Number(data.get('ball-speed')) ||
-                        Controller.BALL_DEFAULT_SPEED) *
+                    (Number(data.get('ball-speed')) || Controller.BALL_DEFAULT_SPEED) *
                     Controller.BALL_SPEED_ADJUSTMENT,
                 racket:
-                    (Number(data.get('racket-speed')) ||
-                        Controller.RACKET_DEFAULT_SPEED) *
+                    (Number(data.get('racket-speed')) || Controller.RACKET_DEFAULT_SPEED) *
                     Controller.RACKET_SPEED_ADJUSTMENT,
             },
         }
@@ -157,10 +155,8 @@ export default class Controller {
                 newParams = Object.assign(
                     {},
                     {
-                        mode: ModeType.competitive as const,
-                        lives:
-                            Number(data.get('lives')) ||
-                            Controller.DEFAULT_LIVES,
+                        mode: 'competitive' as const,
+                        lives: Number(data.get('lives')) || Controller.DEFAULT_LIVES,
                     },
                     commonParams
                 )
@@ -169,7 +165,7 @@ export default class Controller {
                 newParams = Object.assign(
                     {},
                     {
-                        mode: ModeType.free as const,
+                        mode: 'free' as const,
                         needRestart: !!data.get('need-restart'),
                         hasCounter: !!data.get('has-counter'),
                     },
@@ -182,20 +178,21 @@ export default class Controller {
 
         let needRestart = false
 
-        if (
-            newParams.mode !== Model.params.mode &&
-            this._state !== GameStateType.stop
-        ) {
-            needRestart = true
-            if (
-                !confirm(
-                    'If you change the mode, the game will be restarted. Continue?'
-                )
-            )
-                return
-        }
+        const oldParams = this._model.params
 
-        this._model.changeParams(newParams, this._state === GameStateType.stop)
+        if (newParams.mode !== oldParams.mode && this._state !== 'stop') {
+            needRestart = true
+            if (!confirm('If you change the mode, the game will be restarted. Continue?')) return
+        }
+        if (
+            oldParams.mode === 'competitive' &&
+            newParams.mode === 'competitive' &&
+            this._state !== 'stop' &&
+            newParams.lives !== oldParams.lives
+        )
+            alert('The new lives count will be used in the new game!')
+
+        this._model.changeParams(newParams, this._state === 'stop')
         needRestart && this.stop()
     }
 
@@ -206,21 +203,13 @@ export default class Controller {
         this._time = time
         const error = this._model.moveBall(elapsed)
         if (error instanceof GamePlayerError)
-            void this.toggleGameState(
-                error instanceof GameLossError
-                    ? GameStateType.stop
-                    : GameStateType.miss
-            )
+            void this.toggleGameState(error instanceof GameLossError ? 'stop' : 'miss')
         else
             this._requestID =
-                this._state === GameStateType.play
-                    ? requestAnimationFrame(this._moveBall)
-                    : undefined
+                this._state === 'play' ? requestAnimationFrame(this._moveBall) : undefined
     }
 
-    private _initControls(
-        controls: IControls & { resume: HTMLCollectionOf<Element> }
-    ) {
+    private _initControls(controls: IControls & { resume: HTMLCollectionOf<Element> }) {
         const data = new FormData(controls.settingsForm as HTMLFormElement)
         this.setParams(data)
 
@@ -229,15 +218,12 @@ export default class Controller {
         const tryResumeGame = () => {
             this._toggleSettingsUI(false)
             if (needChangeState) {
-                this._state === GameStateType.pause &&
-                    this.toggleGameState(GameStateType.play)
+                this._state === 'pause' && this.toggleGameState('play')
                 needChangeState = false
             }
         }
 
-        controls.playPause?.addEventListener('click', () =>
-            this.toggleGameState()
-        )
+        controls.playPause?.addEventListener('click', () => this.toggleGameState())
 
         controls.settingsForm?.addEventListener('submit', event => {
             const data = new FormData(event.currentTarget as HTMLFormElement)
@@ -249,8 +235,8 @@ export default class Controller {
 
         controls.settingsOpenner?.addEventListener('click', () => {
             this._toggleSettingsUI(true)
-            if (this._state === GameStateType.play) {
-                this.toggleGameState(GameStateType.pause)
+            if (this._state === 'play') {
+                this.toggleGameState('pause')
                 needChangeState = true
             }
         })
@@ -258,9 +244,7 @@ export default class Controller {
         controls.settingsClose?.addEventListener('click', tryResumeGame)
 
         controls.settingsWrapper?.addEventListener('click', event => {
-            return event.target === event.currentTarget
-                ? tryResumeGame()
-                : false
+            return event.target === event.currentTarget ? tryResumeGame() : false
         })
 
         const competitiveSettings = document.getElementsByClassName('dependent')
@@ -268,10 +252,7 @@ export default class Controller {
         const updateSettingsVisibility = (element?: HTMLInputElement) => {
             const value = element?.value
             for (const setting of competitiveSettings)
-                setting.classList.toggle(
-                    'hidden',
-                    value !== setting.getAttribute('data-type')
-                )
+                setting.classList.toggle('hidden', value !== setting.getAttribute('data-type'))
         }
 
         document.querySelectorAll('input[type=radio][name=mode]').forEach(v =>
@@ -281,9 +262,7 @@ export default class Controller {
         )
 
         for (const element of controls.resume)
-            element.addEventListener('click', () =>
-                this.toggleGameState(GameStateType.play)
-            )
+            element.addEventListener('click', () => this.toggleGameState('play'))
 
         controls.settingsForm?.addEventListener('reset', () => {
             // Just a hack to execute code after form reset
@@ -303,4 +282,6 @@ export default class Controller {
     private _toggleSettingsUI(state: boolean) {
         this._model.toggleSettingsUI(state)
     }
+
+    public noop() {}
 }
