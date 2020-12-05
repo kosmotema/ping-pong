@@ -2,18 +2,12 @@ import Controller from './controller.js'
 import Model from './model.js'
 import View from './view.js'
 
-new FontFaceObserver('Press Start 2P')
-    .load(null, 1000)
-    .then(init)
-    .catch(() => {
-        new FontFaceObserver('Press Start 2P - Fallback')
-            .load()
-            .then(init)
-            .catch(() => {
-                document.getElementById('loading')!.textContent =
-                    'Cannot load font assets. Check your internet connection and refresh page'
-            })
+new FontFaceObserver('Press Start 2P').load(null, 1000).then(init, () => {
+    new FontFaceObserver('Press Start 2P - Fallback').load().then(init, () => {
+        document.getElementById('loading')!.textContent =
+            'Cannot load font assets. Check your internet connection and refresh page'
     })
+})
 
 function init() {
     document.getElementById('loading')?.classList.add('fast-fade')
