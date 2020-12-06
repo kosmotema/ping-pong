@@ -105,19 +105,17 @@
 
 aside {
     position: absolute;
-    right: 5rem;
-    top: 1.5rem;
-    -ms-user-select: none;
-    -moz-user-select: none;
-    -webkit-user-select: none;
+    top: 1.35rem;
+    left: 0;
+    right: 0;
     user-select: none;
 
     > button {
         color: white;
-        padding: 0.35rem 0.35rem;
-        width: 1rem;
-        height: 1rem;
-        margin: 0 0.5rem;
+        border: 0.5rem solid transparent; // hack to use border as padding
+        width: 2rem;
+        height: 2rem;
+        margin: 0 0.25rem;
         transition: transform 0.25s linear;
         background: transparent center/contain no-repeat;
 
