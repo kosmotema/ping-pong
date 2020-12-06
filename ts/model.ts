@@ -34,7 +34,7 @@ export default class Model {
             ...commonRacketParams,
         }
         this._rightRacket = {
-            x: screenSize.width - objects.racket.offset,
+            x: screenSize.width - objects.racket.offset - objects.racket.width,
             ...commonRacketParams,
         }
         this._ball = {
