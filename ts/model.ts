@@ -70,8 +70,23 @@ export default class Model {
         }
     }
 
-    // TODO: support screen sizes change
+    // TODO: update sizes of shapes
     public updateScreenSize(size: ISize) {
+        const ratio = { x: size.width / this._screenSize.width, y: size.height / this._screenSize.height }
+
+        this._leftRacket.x *= ratio.x
+        this._leftRacket.y *= ratio.y
+        this._view.updatePosition("leftRacket", this._leftRacket, false)
+
+        this._rightRacket.x *= ratio.x
+        this._rightRacket.y *= ratio.y
+        this._view.updatePosition("rightRacket", this._rightRacket, false)
+
+        this._ball.x *= ratio.x
+        this._ball.y *= ratio.y
+        this._view.updatePosition("ball", this._ball, false)
+
+        this._view.screenSizeChanged(size) // it will redraw canvas automatically
         this._screenSize = size
     }
 
