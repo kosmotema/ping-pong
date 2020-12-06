@@ -87,6 +87,10 @@ export default class Controller {
                 blurred = false
             }
         })
+
+        window.addEventListener('resize', () =>
+            this._model.updateScreenSize({ width: window.innerWidth, height: window.innerHeight })
+        )
     }
 
     private _manipulationKeyDown = (ev: KeyboardEvent) => {
