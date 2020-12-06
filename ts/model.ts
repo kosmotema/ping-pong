@@ -72,19 +72,23 @@ export default class Model {
 
     // TODO: update sizes of shapes
     public updateScreenSize(size: ISize) {
-        const ratio = { x: size.width / this._screenSize.width, y: size.height / this._screenSize.height }
+        const ratio = {
+            x: size.width / this._screenSize.width,
+            y: size.height / this._screenSize.height,
+        }
 
         this._leftRacket.x *= ratio.x
         this._leftRacket.y *= ratio.y
-        this._view.updatePosition("leftRacket", this._leftRacket, false)
+        this._view.updatePosition('leftRacket', this._leftRacket, false)
 
-        this._rightRacket.x *= ratio.x
+        // small hack to prevent different offset for left and right rackets (as when using simple `*= ratio.x`, it will also affect on right racket's width)
+        this._rightRacket.x = size.width - this._leftRacket.x - this._rightRacket.width
         this._rightRacket.y *= ratio.y
-        this._view.updatePosition("rightRacket", this._rightRacket, false)
+        this._view.updatePosition('rightRacket', this._rightRacket, false)
 
         this._ball.x *= ratio.x
         this._ball.y *= ratio.y
-        this._view.updatePosition("ball", this._ball, false)
+        this._view.updatePosition('ball', this._ball, false)
 
         this._view.screenSizeChanged(size) // it will redraw canvas automatically
         this._screenSize = size
