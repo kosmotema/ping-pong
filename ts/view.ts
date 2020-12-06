@@ -3,7 +3,7 @@ export default class View {
     private static readonly NOTIFICATION_FADEOUT = 2500
 
     private static readonly IMAGE_SIZE = 25
-    private static readonly LIVES_OFFSET = 75
+    private static readonly LIVES_OFFSET = 150
     private static readonly BALL_PARTS = 3
     private static readonly DIVIDER_WIDTH = 4
 
