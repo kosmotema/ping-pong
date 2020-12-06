@@ -5,6 +5,7 @@ export default class View {
     private static readonly IMAGE_SIZE = 25
     private static readonly LIVES_OFFSET = 75
     private static readonly BALL_PARTS = 3
+    private static readonly DIVIDER_WIDTH = 4
 
     private static PLAYER_NAME = { left: 'Left', right: 'Right' }
 
@@ -126,7 +127,7 @@ export default class View {
         }
 
         this._ctx.setLineDash([10, 5])
-        this._ctx.lineWidth = 4
+        this._ctx.lineWidth = View.DIVIDER_WIDTH
         this._ctx.strokeStyle = '#ccc'
 
         this._ctx.beginPath()
