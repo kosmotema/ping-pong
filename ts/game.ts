@@ -17,7 +17,10 @@ function init() {
     if (!canvas) {
         console.error("[game] Missed game's canvas")
     } else {
-        const screenSize = { height: window.innerHeight, width: window.innerWidth }
+        const screenSize = {
+            width: document.documentElement.clientWidth,
+            height: document.documentElement.clientHeight,
+        }
 
         const controls = {
             playPause: document.getElementById('play-pause'),

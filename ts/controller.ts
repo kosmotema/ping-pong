@@ -89,7 +89,10 @@ export default class Controller {
         })
 
         window.addEventListener('resize', () =>
-            this._model.updateScreenSize({ width: window.innerWidth, height: window.innerHeight })
+            this._model.updateScreenSize({
+                width: document.documentElement.clientWidth,
+                height: document.documentElement.clientHeight,
+            })
         )
     }
 
