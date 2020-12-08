@@ -2,7 +2,7 @@
   "name": "@xapdkop/ping-pong",
   "version": "0.10.2",
   "private": true,
-  "description": "Just a classic version of the Pong Pong game",
+  "description": "Just a classic version of the Ping Pong game",
   "main": "game.html",
   "scripts": {
     "sass:prod": "sass ./scss/:./assets/css/",
