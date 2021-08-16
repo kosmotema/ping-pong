@@ -1,9 +1,0 @@
-{
-  "extends": "@tsconfig/recommended",
-  "compilerOptions": {
-    "incremental": true,
-    "allowJs": false,
-    "checkJs": false
-  },
-  "files": ["server.ts"]
-}
