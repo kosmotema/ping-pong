@@ -5,7 +5,5 @@
     "allowJs": false,
     "checkJs": false
   },
-  "files": [
-    "server.ts"
-  ]
+  "files": ["server.ts"]
 }
