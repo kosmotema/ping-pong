@@ -8,7 +8,8 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "serve": "vite preview",
-    "svgo": "svgo -f ./assets/img"
+    "svg": "svgo -f ./assets/img",
+    "format": "prettier . --write"
   },
   "repository": {
     "type": "git",
