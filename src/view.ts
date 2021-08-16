@@ -24,7 +24,7 @@ export default class View {
   private readonly _winnerPlayer: HTMLElement | null;
   private readonly _sounds: Record<GameSoundType, HTMLAudioElement | null>;
   private readonly _images: Record<'star' | 'heart',  HTMLImageElement>;
-  private _livesType: 'heart' | 'star' | 'none' = 'heart';
+  private _livesType: CounterType = 'heart';
 
   private _screenSize!: ISize;
   private _leftRacket!: IPosition & ISize;
