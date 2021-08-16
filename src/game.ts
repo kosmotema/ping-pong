@@ -2,15 +2,32 @@ import '../scss/common.scss';
 import '../scss/game.scss';
 import '../scss/ui.scss';
 
+import FontFaceObserver from 'fontfaceobserver';
 import Controller from './controller';
 import Model from './model';
 import View from './view';
 
-const canvas = document.getElementById('game') as HTMLCanvasElement;
+async function load() {
+  try {
+    const font = new FontFaceObserver('Press Start 2P');
+    await font.load();
+  } catch {
+    document.getElementById('loading')!.textContent =
+      'Cannot load font assets. Check your internet connection and refresh page';
+      return;
+  }
+  game();
+}
 
-if (!canvas) {
-  console.error("[game] Missed game's canvas");
-} else {
+function game() {
+  document.getElementById('loading')?.classList.add('fast-fade');
+  const canvas = document.getElementById('game') as HTMLCanvasElement;
+
+  if (!canvas) {
+    console.error("[game] Missed game's canvas");
+    return;
+  }
+
   const screenSize = {
     width: document.documentElement.clientWidth,
     height: document.documentElement.clientHeight,
@@ -48,3 +65,5 @@ if (!canvas) {
 
   controller.noop(); // use it to prevent ts(6133)
 }
+
+await load();

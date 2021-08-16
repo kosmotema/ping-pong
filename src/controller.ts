@@ -138,8 +138,8 @@ export default class Controller {
         break;
 
       case 'KeyP':
-      case 'Space':
-        this.toggleGameState();
+        // case 'Space':
+        event.shiftKey && this.toggleGameState();
         break;
     }
   };
@@ -252,6 +252,8 @@ export default class Controller {
         needChangeState = false;
       }
     };
+
+    controls.restart?.addEventListener('click', () => this.restart());
 
     controls.playPause?.addEventListener('click', () => this.toggleGameState());
 
