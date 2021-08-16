@@ -165,8 +165,7 @@ export default class View {
       fillStyle: this._ctx.fillStyle,
     };
 
-    this._ctx.font =
-      "20px 'Press Start 2P', cursive";
+    this._ctx.font = "20px 'Press Start 2P', cursive";
     this._ctx.fillStyle = 'white';
 
     if (this.lives.left !== undefined) {
@@ -197,7 +196,11 @@ export default class View {
         metrics.actualBoundingBoxAscent +
         Math.abs(metrics.actualBoundingBoxDescent);
       const offset = this._screenSize.width / 2 + View.LIVES_OFFSET;
-      this._ctx.fillText(text, offset + View.IMAGE_SIZE + View.LIVES_GAP, 25 + height);
+      this._ctx.fillText(
+        text,
+        offset + View.IMAGE_SIZE + View.LIVES_GAP,
+        25 + height
+      );
 
       this._ctx.drawImage(
         this._images[this._livesType],
