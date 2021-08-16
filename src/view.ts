@@ -9,7 +9,8 @@ export default class View {
 
   private static readonly IMAGE_SIZE = 25;
   private static readonly LIVES_OFFSET = 150;
-  private static readonly BALL_PARTS = 3;
+  private static readonly LIVES_GAP = 10;
+  private static readonly BALL_PARTS = 5;
   private static readonly DIVIDER_WIDTH = 4;
 
   private static PLAYER_NAME = { left: 'Left', right: 'Right' };
@@ -165,7 +166,7 @@ export default class View {
     };
 
     this._ctx.font =
-      "20px 'Press Start 2P', 'Press Start 2P - Fallback', cursive";
+      "20px 'Press Start 2P', cursive";
     this._ctx.fillStyle = 'white';
 
     if (this.lives.left !== undefined) {
@@ -177,7 +178,7 @@ export default class View {
         Math.abs(metrics.actualBoundingBoxDescent);
       const offset =
         this._screenSize.width / 2 - View.LIVES_OFFSET - View.IMAGE_SIZE;
-      this._ctx.fillText(text, offset - 5, 25 + height);
+      this._ctx.fillText(text, offset - View.LIVES_GAP, 25 + height);
 
       this._ctx.drawImage(
         this._images[this._livesType],
@@ -196,7 +197,7 @@ export default class View {
         metrics.actualBoundingBoxAscent +
         Math.abs(metrics.actualBoundingBoxDescent);
       const offset = this._screenSize.width / 2 + View.LIVES_OFFSET;
-      this._ctx.fillText(text, offset + View.IMAGE_SIZE + 5, 25 + height);
+      this._ctx.fillText(text, offset + View.IMAGE_SIZE + View.LIVES_GAP, 25 + height);
 
       this._ctx.drawImage(
         this._images[this._livesType],
