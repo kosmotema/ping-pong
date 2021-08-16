@@ -3,6 +3,9 @@ import pingSound from '../assets/sounds/ping.mp3';
 import pongSound from '../assets/sounds/pong.mp3';
 import startSound from '../assets/sounds/start.mp3';
 
+import heartImg from '../assets/img/heart.svg';
+import starImg from '../assets/img/star.svg';
+
 export default class View {
   private static readonly NOTIFICATION_TIMEOUT = 5000;
   private static readonly NOTIFICATION_FADEOUT = 1500;
@@ -20,7 +23,7 @@ export default class View {
   private readonly _missPlayer: HTMLElement | null;
   private readonly _winnerPlayer: HTMLElement | null;
   private readonly _sounds: Record<GameSoundType, HTMLAudioElement | null>;
-  private readonly _images: { star: HTMLImageElement; heart: HTMLImageElement };
+  private readonly _images: Record<'star' | 'heart',  HTMLImageElement>;
   private _livesType: 'heart' | 'star' | 'none' = 'heart';
 
   private _screenSize!: ISize;
@@ -38,15 +41,15 @@ export default class View {
     this._winnerPlayer = document.getElementById('winner-player');
 
     this._sounds = {
-      'game-over': new Audio(gameOverSound),
-      ping: new Audio(pingSound),
-      pong: new Audio(pongSound),
-      start: new Audio(startSound),
+      'game-over': View.createAudio(gameOverSound),
+      ping: View.createAudio(pingSound),
+      pong: View.createAudio(pongSound),
+      start: View.createAudio(startSound),
     };
 
     this._images = {
-      star: document.getElementById('asset-star') as HTMLImageElement,
-      heart: document.getElementById('asset-heart') as HTMLImageElement,
+      star: View.createImage(starImg),
+      heart: View.createImage(heartImg),
     };
 
     const dependentSettings = Array.from(
@@ -74,6 +77,16 @@ export default class View {
     this._rightRacket = objects.rightRacket;
     this.lives.left = this.lives.right = startLives;
     this.screenSizeChanged(screenSize);
+  }
+
+  private static createImage(src: string): HTMLImageElement {
+    const element = new Image();
+    element.src = src;
+    return element;
+  }
+
+  private static createAudio(src: string): HTMLAudioElement {
+    return new Audio(src);
   }
 
   public screenSizeChanged(newSize: ISize) {
