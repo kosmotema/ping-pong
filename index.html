@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ping ... pong</title>
+  </head>
+
+  <body>
+    <canvas id="game"></canvas>
+
+        <aside class='flex flex-center' aria-label="Controls">
+            <button id="volume" title="Mute/unmute sounds"></button>
+            <button id="restart" title="Restart the game"></button>
+            <button id="play-pause" class="pause" title="Play/pause the game"></button>
+            <button id="settings--open" title="Open settings"></button>
+        </aside>
+
+        <section class="container" id="greeting">
+            <h1>ping ... pong</h1>
+            <p>
+                To control the left racket use <span class="button">W</span> and
+                <span class="button">S</span> buttons
+            </p>
+            <p>
+                To manipulate the right one use
+                <span class="button" title="arrow up">▲</span> and
+                <span class="button" title="arrow down">▼</span>
+            </p>
+            <p>
+                Use <span class="button">P</span> or <span class="button">Space</span> to pause the
+                game
+            </p>
+            <p>
+                For game restart use <span class="button">Shift</span> +
+                <span class="button">R</span>
+            </p>
+            <p>
+                To stop the game press <span class="button">Shift</span> +
+                <span class="button">B</span>
+            </p>
+            <button class="btn resume">Start the game</button>
+        </section>
+
+        <section class="container hidden" id="pause">
+            The game is paused
+            <button class="btn resume">Resume the game</button>
+        </section>
+        <section class="container hidden" id="miss">
+            <p>
+                <span id="miss-player"></span> player didn't hit the ball,<br />so the game was
+                suspended
+            </p>
+            <button class="btn resume">Continue playing</button>
+        </section>
+
+        <aside id="lose" class="notification hidden" aria-label="Winner notification">
+            <span id="winner-player"></span> player won the game 🏆
+        </aside>
+
+        <section id="settings" class="flex flex-center hidden">
+            <form id="settings--form" class="flex flex-center" enctype="multipart/form-data">
+                <button id="settings--close" type="button"></button>
+
+                <h2>Settings</h2>
+                <label
+                    >Ball speed: <input type="range" min="1" max="10" value="5" name="ball-speed"
+                /></label>
+                <label
+                    >Rackets speed:
+                    <input type="range" min="1" max="10" value="5" name="racket-speed"
+                /></label>
+                <label
+                    ><input type="checkbox" name="miss-pause" checked /> Suspend the game if the
+                    ball is missed</label
+                >
+
+                <span class="flex flex-align-center">
+                    Game mode:
+                    <input
+                        type="radio"
+                        id="competitive-mode"
+                        checked
+                        name="mode"
+                        value="competitive"
+                    />
+                    <label for="competitive-mode"> competitive </label>
+                    <input id="free-mode" type="radio" name="mode" value="free" />
+                    <label for="free-mode"> free </label>
+                </span>
+
+                <label class="dependent" data-type="competitive"
+                    >Lives count: <input type="number" min="1" value="3" name="lives"
+                /></label>
+                <label class="dependent hidden" data-type="free"
+                    ><input type="checkbox" name="has-counter" checked /> Display "hit
+                    points"</label
+                >
+                <label class="dependent hidden" data-type="free"
+                    ><input type="checkbox" name="need-restart" />Reset the game if the ball is
+                    missed</label
+                >
+
+                <span class="flex flex-center flex-x-gap">
+                    <button class="btn" id="settings--apply" type="submit">Apply</button>
+                    <button class="btn" id="settings--reset" type="reset">Reset</button>
+                </span>
+
+                <span id="copyright">Made by xapdkop. 2020, All rights reserved</span>
+            </form>
+        </section>
+
+        <!-- <div id="loading" class="flex flex-center flex-column">
+            <h1>Game is loading...</h1>
+            <div class="loader">
+                <span class="racket"></span>
+                <span class="ball"></span>
+                <span class="racket"></span>
+            </div>
+        </div> -->
+
+        <div id="assets">
+            <img
+                id="asset-heart"
+                src="/assets/img/heart.svg"
+                style="object-fit: contain"
+                alt="heart"
+            />
+            <img
+                id="asset-star"
+                src="/assets/img/star.svg"
+                style="object-fit: contain"
+                alt="star"
+            />
+        </div>
+
+    <script src="/src/game.ts" type="module"></script>
+  </body>
+</html>
