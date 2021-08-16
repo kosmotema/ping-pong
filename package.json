@@ -5,16 +5,11 @@
   "description": "Just a classic version of the Pong Pong game",
   "main": "game.html",
   "scripts": {
-    "sass:prod": "sass ./scss/:./assets/css/",
-    "sass:dev": "yarn sass:prod --style expanded --source-map",
-    "sass:watch": "yarn sass:dev --watch",
-    "ts:build": "tsc",
-    "ts:watch": "tsc --watch",
-    "server:build": "tsc --project ./tsconfig.server.json",
-    "server:run": "node ./server.js",
-    "svgo": "svgo -f ./assets/img",
-    "build": "run-p ts:build sass:prod",
-    "dev": "run-p ts:build sass:dev server:build && run-p sass:watch ts:watch server:run"
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "serve": "vite preview",
+    "svg": "svgo -f ./assets/img",
+    "format": "prettier . --write"
   },
   "repository": {
     "type": "git",
@@ -32,8 +27,10 @@
     "fastify": "^3.8.0",
     "fastify-static": "^3.3.0",
     "npm-run-all": "^4.1.5",
+    "prettier": "^2.3.2",
     "sass": "^1.29.0",
     "svgo": "^1.3.2",
-    "typescript": "^4.1.2"
+    "typescript": "^4.1.2",
+    "vite": "^2.4.4"
   }
 }

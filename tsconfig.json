@@ -1,12 +1,14 @@
 {
   "compilerOptions": {
     "incremental": true,
-    "target": "es2016",
-    "module": "esnext",
+    "target": "ESNext",
+    "module": "ESNext",
+    "lib": ["ESNext", "DOM"],
+    "moduleResolution": "Node",
     "allowJs": false,
     "checkJs": false,
     "sourceMap": true,
-    "outDir": "./js",
+    "outDir": "./dist",
     "removeComments": true,
     "strict": true,
     "noImplicitAny": true,
@@ -14,18 +16,18 @@
     "strictFunctionTypes": true,
     "strictBindCallApply": true,
     "strictPropertyInitialization": true,
+    "resolveJsonModule": true,
     "noImplicitThis": true,
     "alwaysStrict": true,
+    "noEmit": true,
+    "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    // "isolatedModules": true,
+    "types": ["vite/client"]
   },
-  "include": [
-    "ts/**/*",
-  ],
-  "files": [
-    "@types/index.d.ts"
-  ]
+  "include": ["./src", "./@types"]
 }
