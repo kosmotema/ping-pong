@@ -29,5 +29,5 @@
     // "isolatedModules": true,
     "types": ["vite/client"]
   },
-  "include": ["./src", "./@types"]
+  "include": ["./src"]
 }
