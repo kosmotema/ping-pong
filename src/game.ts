@@ -7,17 +7,10 @@ import Controller from './controller';
 import Model from './model';
 import View from './view';
 
-async function load() {
-  try {
-    const font = new FontFaceObserver('Press Start 2P');
-    await font.load();
-  } catch {
-    document.getElementById('loading')!.textContent =
-      'Cannot load font assets. Check your internet connection and refresh page';
-      return;
-  }
-  game();
-}
+new FontFaceObserver('Press Start 2P').load().then(game, () => {
+  document.getElementById('loading')!.textContent =
+    'Cannot load font assets. Check your internet connection and refresh page';
+});
 
 function game() {
   document.getElementById('loading')?.classList.add('fast-fade');
@@ -65,5 +58,3 @@ function game() {
 
   controller.noop(); // use it to prevent ts(6133)
 }
-
-await load();
