@@ -254,7 +254,6 @@ export default class Controller {
     };
 
     controls.restart?.addEventListener('click', () => this.restart());
-
     controls.playPause?.addEventListener('click', () => this.toggleGameState());
 
     controls.settingsForm?.addEventListener('submit', (event) => {
