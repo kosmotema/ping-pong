@@ -1,12 +1,17 @@
 {
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "type": "edge",
-            "request": "launch",
-            "name": "Launch Microsoft Edge on localhost",
-            "webRoot": "${workspaceFolder}",
-            "url": "http://localhost:3000"
-        }
-    ]
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch via Yarn",
+      "request": "launch",
+      "runtimeArgs": [
+        "dev"
+      ],
+      "runtimeExecutable": "yarn",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "type": "node"
+    }
+  ]
 }
