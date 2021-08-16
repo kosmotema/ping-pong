@@ -2,56 +2,64 @@ import { GameLossError, GameMissError, GamePlayerError } from './exceptions';
 import View from './view';
 
 export default class Model {
-  public static params: GameParams = {
+  public params: GameParams = {
     missPause: true,
     mode: 'competitive',
     speed: { ball: 0.35, racket: 5 },
     lives: 3,
   };
 
-  private static _screenSize: ISize;
+  private _screenSize: ISize;
 
-  private _leftRacket: IRacket;
-  private _rightRacket: IRacket;
-  private _ball: IBall;
+  private readonly _leftRacket: IRacket;
+  private readonly _rightRacket: IRacket;
+  private readonly _ball: IBall;
 
-  private _view: View;
+  private readonly _view: View;
 
   private _needSounds: boolean = true;
 
-  public constructor(
-    view: View,
-    objects: { leftRacket: IShape; rightRacket: IShape; ball: IShape },
-    screenSize?: ISize
-  ) {
-    this._view = view;
+  public constructor(view: View, objects: GameObjectsData, screenSize: ISize) {
+    this._screenSize = screenSize;
 
-    const racketParams = {
-      speed: Model.params.speed.racket,
-      lives:
-        Model.params.mode === 'competitive'
-          ? Model.params.lives
-          : undefined,
+    const commonRacketParams = {
+      height: objects.racket.height,
+      width: objects.racket.width,
+      y: (screenSize.height - objects.racket.height) / 2,
+      counter: this.params.mode === 'competitive' ? this.params.lives : 0,
     };
 
-    this._leftRacket = Object.assign({}, objects.leftRacket, {
-      counter: racketParams.lives ?? 0,
-    });
-    this._rightRacket = Object.assign({}, objects.rightRacket, {
-      counter: racketParams.lives ?? 0,
-    });
-    this._ball = Object.assign({}, objects.ball, {
-      speed: Model.params.speed.ball,
+    this._leftRacket = {
+      x: objects.racket.offset,
+      ...commonRacketParams,
+    };
+    this._rightRacket = {
+      x: screenSize.width - objects.racket.offset - objects.racket.width,
+      ...commonRacketParams,
+    };
+    this._ball = {
+      ...objects.ball,
+      x: screenSize.width / 2,
+      y: screenSize.height / 2,
       angle: Model._generateAngle(),
-    });
-    if (Model.params.mode === 'competitive') {
-      this._view.updateLives(this._leftRacket.counter!, 'left');
-      this._view.updateLives(this._rightRacket.counter!, 'right');
-    }
-    if (screenSize) Model._screenSize = screenSize;
+      speed: this.params.speed.ball,
+    };
+
+    this._view = view;
+    this._view.init(
+      {
+        leftRacket: this._leftRacket,
+        rightRacket: this._rightRacket,
+        ball: this._ball,
+      },
+      screenSize,
+      this.params.mode === 'competitive'
+        ? commonRacketParams.counter
+        : undefined
+    );
   }
 
-  public moveRacket(type: RacketType, direction: Direction) {
+  public moveRacket(type: RacketType, direction: RacketDirectionType) {
     switch (type) {
       case 'left':
         if (this._tryMoveRacket(this._leftRacket, direction))
@@ -64,21 +72,40 @@ export default class Model {
     }
   }
 
-  public static updateScreenSize(size: ISize) {
-    Model._screenSize = size;
+  // TODO: update sizes of shapes
+  public updateScreenSize(size: ISize) {
+    const ratio = {
+      x: size.width / this._screenSize.width,
+      y: size.height / this._screenSize.height,
+    };
+
+    this._leftRacket.x *= ratio.x;
+    this._leftRacket.y *= ratio.y;
+    this._view.updatePosition('leftRacket', this._leftRacket, false);
+
+    // small hack to prevent different offset for left and right rackets (as when using simple `*= ratio.x`, it will also affect on right racket's width)
+    this._rightRacket.x =
+      size.width - this._leftRacket.x - this._rightRacket.width;
+    this._rightRacket.y *= ratio.y;
+    this._view.updatePosition('rightRacket', this._rightRacket, false);
+
+    this._ball.x *= ratio.x;
+    this._ball.y *= ratio.y;
+    this._view.updatePosition('ball', this._ball, false);
+
+    this._view.screenSizeChanged(size); // it will redraw canvas automatically
+    this._screenSize = size;
   }
 
   public moveBall(elapsedTime: number): void | GamePlayerError {
     try {
-      const { top, left } = this._simulateBall({
-        top:
-          -Math.sin(this._ball.angle) * elapsedTime * Model.params.speed.ball,
-        left:
-          Math.cos(this._ball.angle) * elapsedTime * Model.params.speed.ball,
+      const { y: top, x: left } = this._simulateBall({
+        y: -Math.sin(this._ball.angle) * elapsedTime * this.params.speed.ball,
+        x: Math.cos(this._ball.angle) * elapsedTime * this.params.speed.ball,
       });
 
-      this._ball.top += top;
-      this._ball.left += left;
+      this._ball.y += top;
+      this._ball.x += left;
       this._view.updatePosition('ball', this._ball);
     } catch (ex) {
       if (ex instanceof GameMissError) {
@@ -88,8 +115,8 @@ export default class Model {
         this._playSound('pong');
         this._view.setMissedPlayerName(ex.player);
         if (
-          Model.params.missPause &&
-          (Model.params.mode !== 'free' || Model.params.needRestart)
+          this.params.missPause &&
+          (this.params.mode !== 'free' || this.params.needRestart)
         )
           return ex;
       }
@@ -97,10 +124,10 @@ export default class Model {
   }
 
   private _updateLives(loser: RacketType): void | GameLossError {
-    if (Model.params.mode === 'competitive') {
+    if (this.params.mode === 'competitive') {
       switch (loser) {
         case 'left':
-          this._view.updateLives(--this._leftRacket.counter!, loser);
+          this._view.updateLives(--this._leftRacket.counter, loser);
           if (this._leftRacket.counter == 0) {
             this._view.setLoserPlayerName(loser);
             this._playSound('game-over');
@@ -109,7 +136,7 @@ export default class Model {
           }
           break;
         case 'right':
-          this._view.updateLives(--this._rightRacket.counter!, loser);
+          this._view.updateLives(--this._rightRacket.counter, loser);
           if (this._rightRacket.counter == 0) {
             this._view.setLoserPlayerName(loser);
             this._playSound('game-over');
@@ -140,42 +167,54 @@ export default class Model {
       let newShift: number | undefined;
 
       if (
-        (newShift = this._shiftBall(this._ball.top, 0, shift.top)) !== undefined
+        (newShift = this._shiftBall(
+          this._ball.y,
+          this._ball.radius,
+          shift.y
+        )) !== undefined
       ) {
         this._ball.angle = 2 * Math.PI - this._ball.angle;
-        shift.top = newShift;
+        shift.y = newShift;
         ready = false;
       }
 
       if (
         (newShift = this._shiftBall(
-          this._ball.top,
-          Model._screenSize.height - this._ball.height,
-          shift.top
+          this._ball.y,
+          this._screenSize.height - this._ball.radius,
+          shift.y
         )) !== undefined
       ) {
         this._ball.angle = 2 * Math.PI - this._ball.angle;
-        shift.top = newShift;
+        shift.y = newShift;
         ready = false;
       }
 
       {
-        const xDistance =
-          shift.left < 0
-            ? this._ball.left - this._leftRacket.left - this._leftRacket.width
-            : this._rightRacket.left - this._ball.left - this._ball.width;
+        const [racket, xDistance] =
+          shift.x < 0
+            ? [
+                this._leftRacket,
+                this._ball.x -
+                  this._ball.radius -
+                  this._leftRacket.x -
+                  this._leftRacket.width,
+              ]
+            : [
+                this._rightRacket,
+                this._rightRacket.x - this._ball.x - this._ball.radius,
+              ];
         const yDistance = Math.tan(this._ball.angle) * xDistance;
-        const racket = shift.left < 0 ? this._leftRacket : this._rightRacket;
         if (
-          Math.abs(shift.left) > xDistance &&
-          racket.top - this._ball.height <= this._ball.top + yDistance &&
-          racket.top + racket.height + this._ball.height >=
-            this._ball.top + yDistance
+          Math.abs(shift.x) > xDistance &&
+          racket.y - this._ball.radius <= this._ball.y + yDistance &&
+          racket.y + racket.height + this._ball.radius >=
+            this._ball.y + yDistance
         ) {
-          shift.left = -shift.left - xDistance;
-          shift.top = shift.top - yDistance;
+          shift.x = -shift.x - xDistance;
+          shift.y = shift.y - yDistance;
           const adjustment =
-            (this._ball.top + yDistance - racket.top - racket.height / 2) /
+            (this._ball.y + yDistance - racket.y - racket.height / 2) /
             racket.height;
           const sign = Math.sign(Math.cos(this._ball.angle));
           this._ball.angle =
@@ -188,16 +227,19 @@ export default class Model {
 
       // left player loose
       if (
-        (newShift = this._shiftBall(this._ball.left, 0, shift.left)) !==
-        undefined
+        (newShift = this._shiftBall(
+          this._ball.x,
+          this._ball.radius,
+          shift.x
+        )) !== undefined
       ) {
         if (
-          Model.params.mode === 'competitive' ||
-          (Model.params.mode === 'free' && Model.params.needRestart)
+          this.params.mode === 'competitive' ||
+          (this.params.mode === 'free' && this.params.needRestart)
         )
           throw new GameMissError('left');
         this._ball.angle = (3 * Math.PI - this._ball.angle) % (2 * Math.PI);
-        shift.left = newShift;
+        shift.x = newShift;
         ready = false;
         this._updateLives('left');
       }
@@ -205,18 +247,18 @@ export default class Model {
       // right player loose
       if (
         (newShift = this._shiftBall(
-          this._ball.left,
-          Model._screenSize.width - this._ball.width,
-          shift.left
+          this._ball.x,
+          this._screenSize.width - this._ball.radius,
+          shift.x
         )) !== undefined
       ) {
         if (
-          Model.params.mode === 'competitive' ||
-          (Model.params.mode === 'free' && Model.params.needRestart)
+          this.params.mode === 'competitive' ||
+          (this.params.mode === 'free' && this.params.needRestart)
         )
           throw new GameMissError('right');
         this._ball.angle = (3 * Math.PI - this._ball.angle) % (2 * Math.PI);
-        shift.left = newShift;
+        shift.x = newShift;
         ready = false;
         this._updateLives('right');
       }
@@ -241,27 +283,27 @@ export default class Model {
 
   private _tryMoveRacket(
     racket: IRacket,
-    direction: Direction
+    direction: RacketDirectionType
   ): boolean {
     switch (direction) {
       case 'up':
-        if (racket.top > Model.params.speed.racket) {
-          racket.top -= Model.params.speed.racket;
+        if (racket.y > this.params.speed.racket) {
+          racket.y -= this.params.speed.racket;
           return true;
-        } else if (racket.top != 0) {
-          racket.top = 0;
+        } else if (racket.y != 0) {
+          racket.y = 0;
           return true;
         }
         return false;
       case 'down':
         if (
-          racket.top + racket.height <
-          Model._screenSize.height - Model.params.speed.racket
+          racket.y + racket.height <
+          this._screenSize.height - this.params.speed.racket
         ) {
-          racket.top += Model.params.speed.racket;
+          racket.y += this.params.speed.racket;
           return true;
-        } else if (racket.top + racket.height != Model._screenSize.height) {
-          racket.top = Model._screenSize.height - racket.height;
+        } else if (racket.y + racket.height != this._screenSize.height) {
+          racket.y = this._screenSize.height - racket.height;
           return true;
         }
         return false;
@@ -270,34 +312,35 @@ export default class Model {
   }
 
   public changeParams(params: GameParams, needResetLives: boolean) {
-    Model.params = params;
+    this.params = params;
     this._view.applyParams(params);
     needResetLives && this._resetLives();
   }
 
   public reset(hard: boolean = false) {
-    this._leftRacket.top =
-      (Model._screenSize.height - this._leftRacket.height) / 2;
-    this._rightRacket.top =
-      (Model._screenSize.height - this._rightRacket.height) / 2;
-    this._ball.left = (Model._screenSize.width - this._ball.width) / 2;
-    this._ball.top = (Model._screenSize.height - this._ball.height) / 2;
+    this._leftRacket.y =
+      (this._screenSize.height - this._leftRacket.height) / 2;
+    this._rightRacket.y =
+      (this._screenSize.height - this._rightRacket.height) / 2;
+    this._ball.x = this._screenSize.width / 2;
+    this._ball.y = this._screenSize.height / 2;
     this._ball.angle = Model._generateAngle();
 
-    this._view.updatePosition('leftRacket', this._leftRacket);
-    this._view.updatePosition('rightRacket', this._rightRacket);
-    this._view.updatePosition('ball', this._ball);
+    this._view.updatePosition('leftRacket', this._leftRacket, false);
+    this._view.updatePosition('rightRacket', this._rightRacket, false);
+    this._view.updatePosition('ball', this._ball, false);
+    this._view.redraw();
 
     if (hard) this._resetLives();
   }
 
   private _resetLives() {
-    if (Model.params.mode === 'competitive')
+    if (this.params.mode === 'competitive')
       this._view.updateLives(
         (this._leftRacket.counter = this._rightRacket.counter =
-          Model.params.lives)
+          this.params.lives)
       );
-    else if (Model.params.hasCounter)
+    else if (this.params.hasCounter)
       this._view.updateLives(
         (this._leftRacket.counter = this._rightRacket.counter = 0)
       );
@@ -307,9 +350,8 @@ export default class Model {
     return (Math.round(Math.random()) + (Math.random() - 0.5) / 2) * Math.PI;
   }
 
-  public stateChanged(newState: GameState, oldState: GameState) {
-    if (newState === 'play' && oldState === 'stop')
-      this._playSound('start');
+  public stateChanged(newState: GameStateType, oldState: GameStateType) {
+    if (newState === 'play' && oldState === 'stop') this._playSound('start');
     this._view.notifyStateChange(newState);
   }
 

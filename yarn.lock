@@ -12,6 +12,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/fontfaceobserver@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "@types/fontfaceobserver@npm:2.1.0"
+  checksum: 19bf653d82f91e86f32cd3f2df2988495b96d8ad5be5a625b7dad06a1a01a9add76607f8b8f821c50aad1f45f4d40433bec48463d60c7e9fa05a02e9e8469b66
+  languageName: node
+  linkType: hard
+
 "@types/node@npm:^14.14.9":
   version: 14.14.9
   resolution: "@types/node@npm:14.14.9"
@@ -31,9 +38,11 @@ __metadata:
   resolution: "@xapdkop/ping-pong@workspace:."
   dependencies:
     "@tsconfig/recommended": ^1.0.1
+    "@types/fontfaceobserver": ^2.1.0
     "@types/node": ^14.14.9
     fastify: ^3.8.0
     fastify-static: ^3.3.0
+    fontfaceobserver: ^2.1.0
     npm-run-all: ^4.1.5
     prettier: ^2.3.2
     sass: ^1.29.0
@@ -828,6 +837,13 @@ __metadata:
   version: 1.0.12
   resolution: "flatstr@npm:1.0.12"
   checksum: e1bb562c94b119e958bf37e55738b172b5f8aaae6532b9660ecd877779f8559dbbc89613ba6b29ccc13447e14c59277d41450f785cf75c30df9fce62f459e9a8
+  languageName: node
+  linkType: hard
+
+"fontfaceobserver@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "fontfaceobserver@npm:2.1.0"
+  checksum: 11e04d076bc4ede19d1b8dbc614fa8dd4b2b092c40e174954abaefa914cefb2f30eca2527a41100cc492e50a1c1b0f7dec477c51ff34091967b9fae36ca3c442
   languageName: node
   linkType: hard
 

@@ -7,7 +7,9 @@
   </head>
 
   <body>
-    <aside aria-label="Controls">
+    <canvas id="game"></canvas>
+
+    <aside class="flex flex-center" aria-label="Controls">
       <button id="volume" title="Mute/unmute sounds"></button>
       <button id="restart" title="Restart the game"></button>
       <button
@@ -18,14 +20,6 @@
       <button id="settings--open" title="Open settings"></button>
     </aside>
 
-    <main id="game">
-      <div class="counter lives" id="left-counter">3</div>
-      <div class="counter lives" id="right-counter">3</div>
-
-      <div id="left"></div>
-      <div id="right"></div>
-      <div id="ball"></div>
-    </main>
     <section class="container" id="greeting">
       <h1>ping ... pong</h1>
       <p>
@@ -38,8 +32,9 @@
         <span class="button" title="arrow down">▼</span>
       </p>
       <p>
-        Use <span class="button">P</span> or
-        <span class="button">Space</span> to pause the game
+        Use <span class="button">Shift</span> + <span class="button">P</span>
+        <!--or <span class="button">Space</span>-->
+        to pause the game
       </p>
       <p>
         For game restart use <span class="button">Shift</span> +
@@ -83,18 +78,18 @@
         <h2>Settings</h2>
         <label
           >Ball speed:
-          <input type="range" min="1" max="10" value="5" name="ball-speed"
+          <input type="range" min="1" max="15" value="5" name="ball-speed"
         /></label>
         <label
           >Rackets speed:
-          <input type="range" min="1" max="10" value="5" name="racket-speed"
+          <input type="range" min="1" max="15" value="5" name="racket-speed"
         /></label>
         <label
           ><input type="checkbox" name="miss-pause" checked /> Suspend the game
           if the ball is missed</label
         >
 
-        <span class="flex flex-center">
+        <span class="flex flex-align-center">
           Game mode:
           <input
             type="radio"
@@ -128,6 +123,15 @@
         <span id="copyright">Made by xapdkop. 2020, All rights reserved</span>
       </form>
     </section>
+
+    <div id="loading" class="flex flex-center flex-column">
+      <h1>Game is loading...</h1>
+      <div class="loader">
+        <span class="racket"></span>
+        <span class="ball"></span>
+        <span class="racket"></span>
+      </div>
+    </div>
 
     <script src="/src/game.ts" type="module"></script>
   </body>

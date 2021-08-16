@@ -8,24 +8,25 @@ export default class Controller {
   public static readonly RACKET_DEFAULT_SPEED = 7;
   public static readonly DEFAULT_LIVES = 3;
 
-  private _model: Model;
+  private readonly _model: Model;
   private _time?: number;
-  private _state: GameState = 'stop';
+  private _state: GameStateType = 'stop';
   private _requestID?: number;
 
-  private _keyState: Record<GameKeyType, boolean> & OptionalIndex<boolean> = {
+  private readonly _keyState: Record<GameKeyType, boolean> &
+    OptionalIndex<boolean> = {
     KeyW: false,
     KeyS: false,
     ArrowUp: false,
     ArrowDown: false,
   };
 
-  public get state(): GameState {
+  public get state(): GameStateType {
     return this._state;
   }
 
   public toggleGameState(
-    state?: GameState,
+    state?: GameStateType,
     silenced: boolean = false
   ): boolean {
     const old = this._state;
@@ -51,6 +52,12 @@ export default class Controller {
     if (this._state === 'stop')
       document.removeEventListener('keypress', this._controlKeyDown);
 
+    this._keyState.KeyW =
+      this._keyState.KeyS =
+      this._keyState.ArrowDown =
+      this._keyState.ArrowDown =
+        false;
+
     if (this._state === 'play') {
       this._time = undefined;
       requestAnimationFrame(this._moveBall);
@@ -73,11 +80,33 @@ export default class Controller {
 
   public constructor(
     model: Model,
-    controls: IControls & { resume: HTMLCollectionOf<Element> }
+    controls: IControls & { resume: Element[] }
   ) {
     this._model = model;
 
     this._initControls(controls);
+
+    let blurred = false;
+
+    window.addEventListener('blur', () => {
+      if (this._state !== 'play') return;
+      blurred = true;
+      this.toggleGameState('pause');
+    });
+
+    window.addEventListener('focus', () => {
+      if (blurred) {
+        this.toggleGameState('play');
+        blurred = false;
+      }
+    });
+
+    window.addEventListener('resize', () =>
+      this._model.updateScreenSize({
+        width: document.documentElement.clientWidth,
+        height: document.documentElement.clientHeight,
+      })
+    );
   }
 
   private _manipulationKeyDown = (ev: KeyboardEvent) => {
@@ -89,17 +118,13 @@ export default class Controller {
   };
 
   private _handlePressedKeys = () => {
-    if (this._keyState.KeyW)
-      this._model.moveRacket('left', 'up');
+    if (this._keyState.KeyW) this._model.moveRacket('left', 'up');
 
-    if (this._keyState.KeyS)
-      this._model.moveRacket('left', 'down');
+    if (this._keyState.KeyS) this._model.moveRacket('left', 'down');
 
-    if (this._keyState.ArrowUp)
-      this._model.moveRacket('right', 'up');
+    if (this._keyState.ArrowUp) this._model.moveRacket('right', 'up');
 
-    if (this._keyState.ArrowDown)
-      this._model.moveRacket('right', 'down');
+    if (this._keyState.ArrowDown) this._model.moveRacket('right', 'down');
   };
 
   private _controlKeyDown = (event: KeyboardEvent) => {
@@ -113,8 +138,8 @@ export default class Controller {
         break;
 
       case 'KeyP':
-      case 'Space':
-        this.toggleGameState();
+        // case 'Space':
+        event.shiftKey && this.toggleGameState();
         break;
     }
   };
@@ -174,10 +199,9 @@ export default class Controller {
 
     let needRestart = false;
 
-    if (
-      newParams.mode !== Model.params.mode &&
-      this._state !== 'stop'
-    ) {
+    const oldParams = this._model.params;
+
+    if (newParams.mode !== oldParams.mode && this._state !== 'stop') {
       needRestart = true;
       if (
         !confirm(
@@ -186,6 +210,13 @@ export default class Controller {
       )
         return;
     }
+    if (
+      oldParams.mode === 'competitive' &&
+      newParams.mode === 'competitive' &&
+      this._state !== 'stop' &&
+      newParams.lives !== oldParams.lives
+    )
+      alert('The new lives count will be used in the new game!');
 
     this._model.changeParams(newParams, this._state === 'stop');
     needRestart && this.stop();
@@ -208,9 +239,7 @@ export default class Controller {
           : undefined;
   };
 
-  private _initControls(
-    controls: IControls & { resume: HTMLCollectionOf<Element> }
-  ) {
+  private _initControls(controls: IControls & { resume: Element[] }) {
     const data = new FormData(controls.settingsForm as HTMLFormElement);
     this.setParams(data);
 
@@ -219,12 +248,12 @@ export default class Controller {
     const tryResumeGame = () => {
       this._toggleSettingsUI(false);
       if (needChangeState) {
-        this._state === 'pause' &&
-          this.toggleGameState('play');
+        this._state === 'pause' && this.toggleGameState('play');
         needChangeState = false;
       }
     };
 
+    controls.restart?.addEventListener('click', () => this.restart());
     controls.playPause?.addEventListener('click', () => this.toggleGameState());
 
     controls.settingsForm?.addEventListener('submit', (event) => {
@@ -249,11 +278,13 @@ export default class Controller {
       return event.target === event.currentTarget ? tryResumeGame() : false;
     });
 
-    const competitiveSettings = document.getElementsByClassName('dependent');
+    const competitiveSettings = Array.from(
+      document.getElementsByClassName('dependent')
+    );
 
     const updateSettingsVisibility = (element?: HTMLInputElement) => {
       const value = element?.value;
-      for (const setting of Array.from(competitiveSettings))
+      for (const setting of competitiveSettings)
         setting.classList.toggle(
           'hidden',
           value !== setting.getAttribute('data-type')
@@ -266,10 +297,8 @@ export default class Controller {
       })
     );
 
-    for (const element of Array.from(controls.resume))
-      element.addEventListener('click', () =>
-        this.toggleGameState('play')
-      );
+    for (const element of controls.resume)
+      element.addEventListener('click', () => this.toggleGameState('play'));
 
     controls.settingsForm?.addEventListener('reset', () => {
       // Just a hack to execute code after form reset
@@ -289,4 +318,6 @@ export default class Controller {
   private _toggleSettingsUI(state: boolean) {
     this._model.toggleSettingsUI(state);
   }
+
+  public noop() {}
 }

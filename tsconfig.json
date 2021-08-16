@@ -26,7 +26,7 @@
     "noFallthroughCasesInSwitch": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    // "isolatedModules": true,
+    "isolatedModules": true,
     "types": ["vite/client"]
   },
   "include": ["./src"]
