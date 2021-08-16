@@ -80,6 +80,8 @@ type GameParams = FreeGameParams | CompetitiveGameParams;
 
 type GameSoundType = 'game-over' | 'ping' | 'pong' | 'start';
 
+type CounterType = 'heart' | 'star' | 'none';
+
 type GameKeyType = 'KeyW' | 'KeyS' | 'ArrowUp' | 'ArrowDown';
 
 type OptionalIndex<U> = { [key: string]: U | undefined };
