@@ -14,11 +14,11 @@
     border-radius: 1rem;
 
     > *:not(button) {
+      width: 100%;
       margin: 1rem auto;
     }
 
     > label {
-      width: 100%;
       margin-left: 0;
       display: flex;
       flex-direction: row;
@@ -34,19 +34,19 @@
 
   &--close {
     position: absolute;
-    right: 0.25rem;
-    top: 0.25rem;
+    right: 0.75rem;
+    top: 0.75rem;
+    width: 1rem;
+    height: 1rem;
+    background: url('/assets/img/cross.svg') center/contain no-repeat;
+    transition: transform 0.25s linear;
 
-    &:hover:before {
+    &:hover {
       transform: rotate(90deg);
-    }
-
-    &:before {
-      background-image: url('/assets/img/cross.svg');
     }
   }
 
-  &--open:before {
+  &--open {
     background-image: url('/assets/img/settings.svg');
   }
 
@@ -83,40 +83,46 @@
   }
 }
 
-.play:before {
+.play {
   background-image: url('/assets/img/play.svg');
 }
 
-.pause:before {
+.pause {
   background-image: url('/assets/img/pause.svg');
 }
 
-#restart:before {
+#restart {
   background-image: url('/assets/img/restart.svg');
 }
 
-#volume:before {
+#volume {
   background-image: url('/assets/img/volume.svg');
 }
 
-#volume.muted:before {
+#volume.muted {
   background-image: url('/assets/img/mute.svg');
 }
 
 aside {
   position: absolute;
-  right: 5rem;
-  top: 1.5rem;
+  top: 1.35rem;
+  left: 0;
+  right: 0;
+  user-select: none;
+  pointer-events: none;
 
   > button {
-    border: 2px solid darkgray;
-    border-radius: 0.5rem;
     color: white;
-    background-color: midnightblue;
+    border: 0.5rem solid transparent; // hack to use border as padding
+    width: 2rem;
+    height: 2rem;
     margin: 0 0.25rem;
+    transition: transform 0.25s linear;
+    background: transparent center/contain no-repeat;
+    pointer-events: auto;
 
     &:hover {
-      background-color: darkslateblue;
+      transform: scale(1.25, 1.25);
     }
   }
 }
@@ -164,20 +170,85 @@ span.button {
   font-weight: bold;
 }
 
-.notification {
-  position: absolute;
-  top: 2.5rem;
-  left: auto;
-  right: auto;
-  color: white;
-  padding: 1rem 2.5rem;
-  font-size: 1.15rem;
-  margin: 0 auto;
-  background: linear-gradient(45deg, slateblue, darkgreen);
-  border-radius: 1rem;
+.fast-fade {
+  transition: opacity 1s ease-in 0.5s, visibility 0s linear 1.5s;
+  opacity: 0;
+  visibility: hidden;
 }
 
-.fade-out {
-  transition: opacity 3.5s linear;
-  opacity: 0;
+#loading {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  background-color: black;
+  color: white;
+  z-index: 15;
+}
+
+$ball-size: 0.5rem;
+$racket-size: 0.35rem;
+
+.loader {
+  margin-top: 1.5rem;
+  position: relative;
+
+  > span {
+    display: inline-block;
+    background-color: white;
+
+    &.racket {
+      width: $racket-size;
+      height: 2.5rem;
+      padding: 0 0.05rem;
+
+      &:nth-of-type(1) {
+        margin-right: 3.5rem;
+      }
+
+      &:nth-of-type(2) {
+        margin-left: 3.5rem;
+      }
+    }
+
+    &.ball {
+      width: $ball-size;
+      height: $ball-size;
+      position: absolute;
+      top: 50%;
+
+      transform: translateY(-50%);
+
+      animation: loading 1.25s infinite linear;
+    }
+  }
+}
+
+@keyframes loading {
+  0% {
+    left: $racket-size;
+  }
+
+  25% {
+    left: calc(50% - #{$ball-size} / 2);
+  }
+
+  50% {
+    left: calc(100% - #{$racket-size} - #{$ball-size});
+  }
+
+  75% {
+    left: calc(50% - #{$ball-size} / 2);
+  }
+
+  100% {
+    left: $racket-size;
+  }
+}
+
+#assets {
+  display: none;
+
+  > img {
+    object-fit: contain;
+  }
 }

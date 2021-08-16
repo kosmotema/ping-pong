@@ -2,20 +2,30 @@ import '../scss/common.scss';
 import '../scss/game.scss';
 import '../scss/ui.scss';
 
+import FontFaceObserver from 'fontfaceobserver';
 import Controller from './controller';
 import Model from './model';
 import View from './view';
 
-const leftRacket = document.getElementById('left'),
-  rightRacket = document.getElementById('right'),
-  ball = document.getElementById('ball');
+new FontFaceObserver('Press Start 2P').load().then(game, () => {
+  document.getElementById('loading')!.textContent =
+    'Cannot load font assets. Check your internet connection and refresh page';
+});
 
-if (!leftRacket || !rightRacket || !ball) {
-  console.error(
-    '[game] Missed some properties of game object: %o',
-    JSON.stringify({ left: leftRacket, right: rightRacket, ball })
-  );
-} else {
+function game() {
+  document.getElementById('loading')?.classList.add('fast-fade');
+  const canvas = document.getElementById('game') as HTMLCanvasElement;
+
+  if (!canvas) {
+    console.error("[game] Missed game's canvas");
+    return;
+  }
+
+  const screenSize = {
+    width: document.documentElement.clientWidth,
+    height: document.documentElement.clientHeight,
+  };
+
   const controls = {
     playPause: document.getElementById('play-pause'),
     settingsForm: document.getElementById('settings--form'),
@@ -25,36 +35,26 @@ if (!leftRacket || !rightRacket || !ball) {
     greeting: document.getElementById('greeting'),
     pause: document.getElementById('pause'),
     miss: document.getElementById('miss'),
-    resume: document.getElementsByClassName('resume'),
+    resume: Array.from(document.getElementsByClassName('resume')),
     lose: document.getElementById('lose'),
     volume: document.getElementById('volume'),
+    restart: document.getElementById('restart'),
   };
 
-  const view = new View(
-    { leftRacket, rightRacket, ball },
-    {
-      left: document.getElementById('left-counter')!,
-      right: document.getElementById('right-counter')!,
+  const shapes: GameObjectsData = {
+    racket: {
+      height: 50,
+      width: 8,
+      offset: 15,
     },
-    controls
-  );
-  const model = new Model(
-    view,
-    {
-      leftRacket: toShape(leftRacket),
-      rightRacket: toShape(rightRacket),
-      ball: toShape(ball),
+    ball: {
+      radius: 8,
     },
-    { height: window.innerHeight, width: window.innerWidth }
-  );
+  };
+
+  const view = new View(canvas, controls);
+  const model = new Model(view, shapes, screenSize);
   const controller = new Controller(model, controls);
-}
 
-function toShape(element: HTMLElement): IShape {
-  return {
-    top: element.offsetTop,
-    left: element.offsetLeft,
-    height: element.offsetHeight,
-    width: element.offsetWidth,
-  };
+  controller.noop(); // use it to prevent ts(6133)
 }

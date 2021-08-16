@@ -1,12 +1,12 @@
 type RacketType = 'left' | 'right';
 
-type Mode = 'competitive' | 'free';
-
-type Direction = 'up' | 'down';
+type RacketDirectionType = 'up' | 'down';
 
 type ObjectType = 'leftRacket' | 'rightRacket' | 'ball';
 
-type GameState = 'play' | 'pause' | 'miss' | 'stop';
+type ModeType = 'competitive' | 'free';
+
+type GameStateType = 'play' | 'pause' | 'miss' | 'stop';
 
 interface ISize {
   width: number;
@@ -14,8 +14,8 @@ interface ISize {
 }
 
 interface IPosition {
-  top: number;
-  left: number;
+  y: number;
+  x: number;
 }
 
 interface IOrientation {
@@ -23,15 +23,19 @@ interface IOrientation {
   horizotal: number;
 }
 
+interface IRadius {
+  radius: number;
+}
+
 type IShape = ISize & IPosition;
 
-type IShapePartial = Partial<IShape> &
-  {
-    [key in keyof IShape]?: number;
-  };
+type GameObjectsData = {
+  racket: ISize & { offset: number };
+  ball: IRadius;
+};
 
-type IRacket = IShape & { counter: number };
-type IBall = IShape & { angle: number };
+type IRacket = IPosition & ISize & { counter: number };
+type IBall = IPosition & IRadius & { angle: number; speed: number };
 
 type ControlObject = {
   element: HTMLElement | null;
@@ -48,7 +52,8 @@ type ControlType =
   | 'pause'
   | 'miss'
   | 'lose'
-  | 'volume';
+  | 'volume'
+  | 'restart';
 
 type IControls = Record<ControlType, HTMLElement | null>;
 
@@ -74,6 +79,8 @@ interface CompetitiveGameParams extends BasicGameParams {
 type GameParams = FreeGameParams | CompetitiveGameParams;
 
 type GameSoundType = 'game-over' | 'ping' | 'pong' | 'start';
+
+type CounterType = 'heart' | 'star' | 'none';
 
 type GameKeyType = 'KeyW' | 'KeyS' | 'ArrowUp' | 'ArrowDown';
 
