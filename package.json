@@ -3,10 +3,10 @@
   "version": "1.0.0-beta1",
   "private": true,
   "description": "Just a classic version of the Ping Pong game",
-  "main": "game.html",
+  "main": "index.html",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "vite build",
     "serve": "vite preview",
     "svg": "svgo -f ./assets/img",
     "format": "prettier . --write"
